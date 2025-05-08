@@ -59,14 +59,15 @@ Consult the [Setup](https://docs.brightsign.biz/space/DOC/395313598/Setup) instr
 
 ### Validation
 
-Ensure that 
+Ensure that
 
 1. The Player is sending console to your serial monitor program
 2. you can connect to the player over SSH
 3. you can access the BrightScript debugger and get to the Linux shell
-    * `Ctrl-C` in the SSH session to get to the debugger
-    * type `exit` to get to the BrightSign Intpreter
-    * type `exit` again to access the Linux shell
+   * `Ctrl-C` in the SSH session to get to the debugger
+   * type `exit` to get to the BrightSign Intpreter
+   * type `exit` again to access the Linux shell
+
 4. inspect the process table from the Linux shell with `ps`
 
 **Do not proceed until all the above are functional**
@@ -81,17 +82,20 @@ The typical OE mechanism to cross-compile and build binaries for the target is k
 
 0. Change the to project root:
 
-    ```bash
-    cd ${project_root:-.}
-    ```
+```bash
+cd ${project_root:-.}
+```
 
 1. Open the [Open Source Release](https://docs.brightsign.biz/space/DOC/2378039297/BrightSign+Open+Source+Resources) page and find the target OS release version. Click on the readme for that version and review any information there.
+
 2. Download the two files - `*-src-dl.tar.gz` and `*-src-oe.tar.gz` to the `project_root`
-3. Expand both tarballs 
 
-    ```tar zxvf *-dl.tar.gz && tar zxvf *-oe.tar.gz```
+3. Expand both tarballs
 
-    this will create a `brightsign-oe` directory in the current directory
+   `tar zxvf *-dl.tar.gz && tar zxvf *-oe.tar.gz`
+
+   this will create a `brightsign-oe` directory in the current directory
+
 4. Disable or remove any virtual environments like `venv`, `pyenv`, `nvm` or `conda`
 
    a. Long paths can cause build problems in bitbake (which will create a bunch of very long paths itself). These virtual environments typically work by adding very long paths to the front of the shell's path.
@@ -100,15 +104,16 @@ The typical OE mechanism to cross-compile and build binaries for the target is k
 
    c. There are many mechanisms -- consult the documentation for your package.
 
-5. Change to the build directory 
+5. Change to the build directory
 
-    ```cd ${project_root:-.}/brightsign-oe/build```
+   `cd ${project_root:-.}/brightsign-oe/build`
 
-    Consult the readme for the correct build command - typically the build command is 
-   
-   ```MACHINE=cobra ./bsbb brightsign-source-release-world```
+   Consult the readme for the correct build command - typically the build command is
+
+   `MACHINE=cobra ./bsbb brightsign-source-release-world`
 
    This will build the entire system and may take up to several hours depending on the speed of your build system.
+
 6. Address and repair any build errors. Common problems include
 
    a. Long paths
@@ -122,29 +127,28 @@ The typical OE mechanism to cross-compile and build binaries for the target is k
    e. Trying to write to unusual directories like `/srv`. It is usually easiest to create these if needed
 
 7. Once building cleanly, build the SDK by changing the target to `brightsign-sdk`
-   
-   ```MACHINE=cobra ./bsbb brightsign-sdk```
+
+   `MACHINE=cobra ./bsbb brightsign-sdk`
 
 8. Locate the SDK installer in `tmp-glibc/deploy/sdk/*.sh` and save it.
 
-    ```cp tmp-glibc/deploy/sdk/*.sh ${project_root:-../../}```
+   `cp tmp-glibc/deploy/sdk/*.sh ${project_root:-../../}`
 
 ### Using packages not in the SDK
 
 The SDK contains a targeted set of libraries, headers, packages, and the cross-platform toolchain. However, your extension may require additional libraries or packages. There are two options: build the components with the SDK or add the component to the SDK by modifying the `brightsign-oe` source tree. Additionally, the developer can choose to static link or dynamic link to the libraries. These are choices for the developer. Here are some common options.
 
-**_To continue with this workshop, no additional exports to the SDK are needed_** 
+___To continue with this workshop, no additional exports to the SDK are needed___
 
 Continue to Step 3 -- Build a Sample Extension or continue to read about other considerations for building and bundling library code.
 
 #### Package in BrightSign OS, but not SDK
 
-For packages that may be in the BrightSign OS but not exported to the SDK, the package can be added by modifying the sdk recipe in `brightsign-oe/meta-bs/recipes-open/brightsign-sdk/brightsign-sdk.bb`.  Append the desired package to the `TOOLCHAIN_TARGET_TASK`. 
+For packages that may be in the BrightSign OS but not exported to the SDK, the package can be added by modifying the sdk recipe in `brightsign-oe/meta-bs/recipes-open/brightsign-sdk/brightsign-sdk.bb`.  Append the desired package to the `TOOLCHAIN_TARGET_TASK`.
 
 For example, to add `libmicrohttpd`, which is already part of BSOS is exported to the SDK. Modify `brightsign-sdk-.bb` to expose this library with:
 
-
-```
+```sh
 TOOLCHAIN_TARGET_TASK += "  
 libstdc++  
 libmicrohttpd  
@@ -158,7 +162,7 @@ Some packages can be troublesome to build outside of the Yocto tree. OpenCV is o
 1. Add a recipe to the build tree for the package such as `meta-bs/recipes-open/opencv`
 2. add that package to the SDK target as above.
 
-**_ALWAYS INCLUDE THE LIBRARIES IN YOUR EXTENSION_**
+___ALWAYS INCLUDE THE LIBRARIES IN YOUR EXTENSION___
 
 It may be beneficial to export several packages and create a sort of personal SDK.  However, take care to include any libraries NOT present in the base OS with your SDK.
 
@@ -194,7 +198,7 @@ cd ${project_root:-.}
 #rm -rf brightsign-oe
 ```
 
-**NB:** the SDK must be `_sourced_` into the current shell whenever used. This must be repeated everytime a new shell is opened.
+__NB:__ the SDK must be `_sourced_` into the current shell whenever used. This must be repeated everytime a new shell is opened.
 
 Removing the built SDK installer is not recommended as you may wish to use it on future projects.
 
@@ -211,7 +215,6 @@ In this step, you will build a small C++ program that will publish the current t
 ### Native Build on Host
 
 Let's start with a native build on the development host to test the code.
-
 
 **Start from a new shell where the SDK enviornment has NOT been sourced**
 
@@ -249,11 +252,11 @@ Open a **THIRD** terminal and test the signal handling, which is important for E
 kill $(pgrep time_publisher)
 ```
 
-**Verfify** the publisher is stopped, that `socat` stops printing times and that the `kill` returned without errors.  _You will need to shutdown `socat` manually.
+__Verfify__ the publisher is stopped, that `socat` stops printing times and that the `kill` returned without errors.  _You will need to shutdown `socat` manually.
 
-_Optional_: `rm -rf ${project_root:-}/build_native` 
+_Optional_: `rm -rf ${project_root:-}/build_native`
 
-It is generally easier to debug, unit test, and generally validate the program before building the Extension and deploying to the player. 
+It is generally easier to debug, unit test, and generally validate the program before building the Extension and deploying to the player.
 
 ### Cross-Platform Build for Player
 
@@ -287,7 +290,7 @@ cd install
 zip -r ../time_publisher-$(date +%s).zip *
 ```
 
-Use [DWS](https://docs.brightsign.biz/space/DOC/370673541/Diagnostic+Web+Server+(DWS)+Overview#SD-(Storage)) or other mechanism to copy (upload) the zip file to the player. 
+Use [DWS](https://docs.brightsign.biz/space/DOC/370673541/Diagnostic+Web+Server+(DWS)+Overview#SD-(Storage)) or other mechanism to copy (upload) the zip file to the player.
 
 Open an SSH connection to the player and drop to the Linux shell.
 
@@ -339,7 +342,7 @@ ps  | grep time_publisher
 
 ### Validation
 
-If the `time_publisher` ran successfully on the player, then the cross platform SDK and toolchain has been validated. 
+If the `time_publisher` ran successfully on the player, then the cross platform SDK and toolchain has been validated.
 
 You now know how to develop and test programs locally and then retarget and test them on a player.
 
@@ -365,17 +368,17 @@ The process of squashing the developers extension directory and creating the ins
 
 ### Init scripts
 
-In **Step 3**, you built and validated the `time_publisher` program to run on the player. You will add the control scripts for the program.
+In __Step 3__, you built and validated the `time_publisher` program to run on the player. You will add the control scripts for the program.
 
-**Open** the file [`sh/bsext_init`](sh/bsext_init) and inspect the flow. You will note the extension name is referenced a few times, but otherwise this should be a familiar SysV style init script. Pay attention to the INIT INFO block at the top of the file and modify the service name, descriptions, requirements, and defaults as needed for any future extensions.
+__Open__ the file [`sh/bsext_init`](sh/bsext_init) and inspect the flow. You will note the extension name is referenced a few times, but otherwise this should be a familiar SysV style init script. Pay attention to the INIT INFO block at the top of the file and modify the service name, descriptions, requirements, and defaults as needed for any future extensions.
 
 Also note that this script takes a parameter of [`start`|`stop`|`restart`|`run`]. Additionally, the helper `start-stop-daemon` is used for lifecycle control.  Additionally, a helper script, `start-ext.sh` is used to manage the actual program.  Breaking the scripts up like this allows the `bsext_init` script to focus on system and extension sub-system interactions while `start-ext.sh` can be very specific to the particular program.
 
 **Open** the file [`sh/start-ext.sh`](./sh/start-ext.sh) and inspect it. Here additional arguments can be supplied to the program, values retrieved from the registry or other config files, or any other logic that might be helpful for your program.
 
-The command `cmake --install .` you executed earlier from the `build_bsos` directory copied these scripts to the `install` directory. 
+The command `cmake --install .` you executed earlier from the `build_bsos` directory copied these scripts to the `install` directory.
 
-Now that you have the skill to build the binary, package and transfer the zip archive, try using the `start-ext.sh` script to start your program.  **Then** proceed to use the `bsext_init` script to start and stop the service (`bsext_init start` and `bsext_init stop`).  This script will start/stop the program as a daemon, so you can try it out in your presentation as well.
+Now that you have the skill to build the binary, package and transfer the zip archive, try using the `start-ext.sh` script to start your program.  __Then__ proceed to use the `bsext_init` script to start and stop the service (`bsext_init start` and `bsext_init stop`).  This script will start/stop the program as a daemon, so you can try it out in your presentation as well.
 
 ### Package the Extension for Development
 
@@ -431,7 +434,7 @@ cat /var/run/time_publisher.pid
 
 Contact your Partner Engineer for information about submitting your extension for signing.  Once signed, the extension will be returned to you as a `.bsfw` file that can be applied to a production (secure) player by adding the file the SD card.  The extension will be installed on reboot.
 
-## Step 6 - Resecuring the Player
+## Step 6 - Restoring the Player State
 
 Consult the [Documentation page](https://docs.brightsign.biz/space/DOC/1936916598/Factory+Reset+a+Player) for methods to reset the player. A full factory reset is recommended as the best way to establish a known starting point.
 
