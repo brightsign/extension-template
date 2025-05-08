@@ -427,7 +427,13 @@ cat /var/run/time_publisher.pid
 # they should be the same
 ```
 
-On a build system prepared as above:
+## Step 5 - Submit Extension for Signing
+
+Contact your Partner Engineer for information about submitting your extension for signing.  Once signed, the extension will be returned to you as a `.bsfw` file that can be applied to a production (secure) player by adding the file the SD card.  The extension will be installed on reboot.
+
+## Step 6 - Resecuring the Player
+
+Consult the [Documentation page](https://docs.brightsign.biz/space/DOC/1936916598/Factory+Reset+a+Player) for methods to reset the player. A full factory reset is recommended as the best way to establish a known starting point.
 
 
 
