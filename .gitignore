@@ -1,0 +1,7 @@
+brightsign-oe/
+build*/
+install/
+sdk/
+*.zip
+*.tar.gz
+brightsign-*-toolchain-*.sh
