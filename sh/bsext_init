@@ -12,15 +12,39 @@
 # Source function library if it exists
 [ -f /etc/init.d/functions ] && . /etc/init.d/functions
 
-SCRIPT_NAME=start-ext.sh
 SCRIPT_PATH=$(dirname $(realpath $0))
 DAEMON_NAME="time_publisher"
 PIDFILE="/var/run/${DAEMON_NAME}.pid"
 
-do_start() {\
-    echo "changeing to ${SCRIPT_PATH} and execing ${0}"
+
+run_extension() {
     cd ${SCRIPT_PATH}
-    start-stop-daemon --start --background --make-pidfile --pidfile ${PIDFILE} --exec $0 -- run
+    export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
+
+    local background=$1
+    if [ "$background" = "true" ]; then
+        echo "Starting ${DAEMON_NAME} in background"
+        start-stop-daemon --start --background --make-pidfile --pidfile ${PIDFILE} \
+                        --exec ./${DAEMON_NAME} --  --port 5005
+    else
+        echo "Starting ${DAEMON_NAME} in foreground"
+        ./${DAEMON_NAME} --port 5005
+    fi
+}
+
+do_start() {
+    DISABLE_AUTO_START="false"
+    # check registry for auto-start
+    reg_disable_auto_start=$(registry extension ${DAEMON_NAME}-disable-auto-start)
+    if [ -n "${reg_disable_auto_start}" ]; then
+        DISABLE_AUTO_START=${reg_disable_auto_start}
+    fi
+
+    if [ "${DISABLE_AUTO_START}" = "true" ]; then
+        echo "Auto-start is disabled for ${DAEMON_NAME}"
+        return
+    fi
+    run_extension true
 }
 
 do_stop() {
@@ -43,8 +67,8 @@ case "$1" in
         do_start
         ;;
     run)
-        cd ${SCRIPT_PATH}
-        /bin/bash ./${SCRIPT_NAME}
+        echo "Running ${DAEMON_NAME} in foreground"
+        run_extension false
         ;;
     *)
         echo "Usage: $0 {start|stop|restart|run}"

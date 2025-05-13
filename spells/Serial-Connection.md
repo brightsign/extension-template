@@ -7,8 +7,7 @@ Serial communications is used to interrupt the boot cycle and insecure the playe
 * A serial to USB cable or arrangement of adapters suitable for your player and development host.
 * A serial monitor program on you development host (tested with picocom on Ubuntu 24.04)
 
-
-1. Consult [Serial Port Configuration](https://docs.brightsign.biz/space/DOC/388434643/Serial+Port+Configuration) for details and instruction about making the physical connection.  **NB**: some players (LS series) may require an additional adapater.
+1. Consult [Serial Port Configuration](https://docs.brightsign.biz/advanced/serial-port-configuration) for details and instruction about making the physical connection.  **NB**: some players (LS series) may require an additional adapater.
 
 **Make the physical connection**
 
@@ -30,7 +29,6 @@ export player_serial_device=/dev/ttyUSB0
 ```
 
 3. **POWER OFF THE PLAYER**
-
 4. Monitor the serial port from the player
 
 Using picocom (modify to use the terminal program of your choice)
@@ -41,12 +39,12 @@ picocom -b 115200 ${player_serial_device}
 
 Nothing will happen yet as the player is powered off, right?
 
-5. **WHILE HOLDING THE _SVC_ BUTTON** power ON the player. 
+5. __WHILE HOLDING THE _SVC_ BUTTON__ power ON the player.
 
 You should see something like:
 _(details will vary based on your player)_
 
-```
+```jl
 Board: chevelle
  (7278 of 7278b1 family)
 strap=00000002,0000001d:

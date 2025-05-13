@@ -2,7 +2,7 @@
 set -e
 
 # set the name of the extension -- must match bsext_init
-name=time_publisher
+name=time_pub
 
 mapper_vol_name=ext_${name}
 tmp_vol_name=tmp_${name}

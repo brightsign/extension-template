@@ -49,13 +49,13 @@ In this step, you will prepare your player for development.
 
 * A player in production, factory reset condition with the Diagnostic Web Server (DWS) enabled.
 
-Consult the [Setup](https://docs.brightsign.biz/space/DOC/395313598/Setup) instructions for a new player if uncertain about this or to get your player into this state.
+Consult the [Setup](https://docs.brightsign.biz/how-tos/factory-reset-a-player) instructions for a new player if uncertain about this or to get your player into this state.
 
 ### Unsecure the Player
 
 1. Connect the player you will use for development to your development PC over Serial -- [Serial-Connection](./spells/Serial-Connection.md)
 2. Unsecure the player -- [Un-Secure-Player](./spells/Un-Secure-Player.md)
-3. Setup and verify ssh communications to the player -- [Telnet and SSH](https://docs.brightsign.biz/space/DOC/370673607/Telnet+and+SSH#Using-Telnet/SSH-with-Serial)
+3. Setup and verify ssh communications to the player -- [Telnet and SSH](https://docs.brightsign.biz/advanced/telnet-and-ssh)
 
 ### Validation
 
@@ -64,6 +64,7 @@ Ensure that
 1. The Player is sending console to your serial monitor program
 2. you can connect to the player over SSH
 3. you can access the BrightScript debugger and get to the Linux shell
+
    * `Ctrl-C` in the SSH session to get to the debugger
    * type `exit` to get to the BrightSign Intpreter
    * type `exit` again to access the Linux shell
@@ -86,10 +87,8 @@ The typical OE mechanism to cross-compile and build binaries for the target is k
 cd ${project_root:-.}
 ```
 
-1. Open the [Open Source Release](https://docs.brightsign.biz/space/DOC/2378039297/BrightSign+Open+Source+Resources) page and find the target OS release version. Click on the readme for that version and review any information there.
-
+1. Open the [Open Source Release](https://docs.brightsign.biz/releases/brightsign-open-source) page and find the target OS release version. Click on the readme for that version and review any information there.
 2. Download the two files - `*-src-dl.tar.gz` and `*-src-oe.tar.gz` to the `project_root`
-
 3. Expand both tarballs
 
    `tar zxvf *-dl.tar.gz && tar zxvf *-oe.tar.gz`
@@ -198,7 +197,7 @@ cd ${project_root:-.}
 #rm -rf brightsign-oe
 ```
 
-__NB:__ the SDK must be `_sourced_` into the current shell whenever used. This must be repeated everytime a new shell is opened.
+__NB:__ the SDK must be _`source`d_ into the current shell whenever used. This must be repeated everytime a new shell is opened.
 
 Removing the built SDK installer is not recommended as you may wish to use it on future projects.
 
@@ -292,7 +291,7 @@ zip -r ../time_publisher-$(date +%s).zip *
 
 Use [DWS](https://docs.brightsign.biz/space/DOC/370673541/Diagnostic+Web+Server+(DWS)+Overview#SD-(Storage)) or other mechanism to copy (upload) the zip file to the player.
 
-Open an SSH connection to the player and drop to the Linux shell.
+Open an SSH connection to the player and drop to the Linux shell. (`Ctl-c, exit, exit` to get to `#` prompt.)
 
 ```sh
 # files uploade by the DWS are in `/storage/sd' on the player.  
@@ -372,13 +371,65 @@ In __Step 3__, you built and validated the `time_publisher` program to run on th
 
 __Open__ the file [`sh/bsext_init`](sh/bsext_init) and inspect the flow. You will note the extension name is referenced a few times, but otherwise this should be a familiar SysV style init script. Pay attention to the INIT INFO block at the top of the file and modify the service name, descriptions, requirements, and defaults as needed for any future extensions.
 
-Also note that this script takes a parameter of [`start`|`stop`|`restart`|`run`]. Additionally, the helper `start-stop-daemon` is used for lifecycle control.  Additionally, a helper script, `start-ext.sh` is used to manage the actual program.  Breaking the scripts up like this allows the `bsext_init` script to focus on system and extension sub-system interactions while `start-ext.sh` can be very specific to the particular program.
+Also note that this script takes a parameter of [`start`|`stop`|`restart`|`run`]. Additionally, the helper `start-stop-daemon` is used for lifecycle control. If you choose to modify the `bsext_init` script, take case as the `start-stop-daemon` will retain the PID of the daemon process for later `stop`ping.  If you were to invoke a script or make some other call, take care to ensure that the PIDs are tracked or can be reliably unwound on `stop`.
 
-**Open** the file [`sh/start-ext.sh`](./sh/start-ext.sh) and inspect it. Here additional arguments can be supplied to the program, values retrieved from the registry or other config files, or any other logic that might be helpful for your program.
+You may wish to extend this script and/or the functions within it to do things like
+
+* use a registry key to disable the script (helpful for debugging)
+* change the port for the UDP message
+
+#### Run v Start
+
+The key difference between invoking `bsext_init` with `run` vs `start` is the backgrounding of the daemon.  When developing an extension, it is very easy to put the player into a crashing and continual rebooting state. Using a registry key to disable the `start` of the extension, can prove to be a real time saver.  Alternatively, a factory reset will remove the extension.
+
+When developing, it is recommended to set just such a `disable` key to prevent the `start` method from running.  The extension can then be tested manually with `bsext_init run` or even by removing the disable key.  If the player ends up in a crash loop, the registry can be written from boot prompt.  (Use `Ctl-C` at boot to get to the prompt.)
 
 The command `cmake --install .` you executed earlier from the `build_bsos` directory copied these scripts to the `install` directory.
 
 Now that you have the skill to build the binary, package and transfer the zip archive, try using the `start-ext.sh` script to start your program.  __Then__ proceed to use the `bsext_init` script to start and stop the service (`bsext_init start` and `bsext_init stop`).  This script will start/stop the program as a daemon, so you can try it out in your presentation as well.
+
+**Test the init script.**
+
+```sh
+# Test the time_publisher from the init script
+
+cd /usr/local
+
+# run time_publisher in the foreground
+./bsext_init run
+# Running time_publisher in foreground
+# Starting time_publisher in foreground
+# Broadcasting time to 127.0.0.1:5005
+
+# stop the time_publisher with Ctl-C
+# ^CCaught signal 2, shutting down...
+# Exporter shutdown complete
+
+# run time_publisher in the background
+./bsext_init start
+# Starting time_publisher
+# changing to /usr/local and execing ./bsext_init
+# Starting time_publisher in background
+
+# check the process table for the time_publisher
+ps  | grep time_publisher
+# 16406 root      4148 S    ./time_publisher
+# 16410 root      2528 S    grep time_publisher
+# verify the time_publisher is running with socat
+socat -u UDP-LISTEN:5005 -
+# 2025-05-08T00:04:11Z
+# 2025-05-08T00:04:12Z
+
+# stop the time_publisher
+./bsext_init stop
+# Stopping time_publisher
+# stopped process in pidfile '/var/run/time_publisher.pid' (pid 23636)
+
+# check the process table for the time_publisher
+ps  | grep time_publisher
+# 16410 root      2528 S    grep time_publisher
+
+```
 
 ### Package the Extension for Development
 
@@ -396,17 +447,23 @@ sh/pkg-dev.sh install lvm
 
 Transfer the most recent zip file to the player as you did before.
 
+**_Is DWS Unresponsive to upload a file?_** 
+
+This can happen when the BrightScript process is stopped such as when you in an active SSH session.  To re-activate DWS, restart the BrightScript process in your ssh session by exiting the Linux prompt with `Ctl-D`.
+
 Connect an ssh session to the player and drop to the Linux shell.
 
 ```sh
 # in the player ssh linux shell
 cd /usr/local
+# clean up any leftovers
+#rm -rf *
 
 export latest=$(ls -t /storage/sd/time_publisher-*.zip | head -n 1)
 unzip ${latest} -o -d /usr/local/
 
 # install the extension
-bash ./ext_time_publisher_install-lvm.sh
+bash ./ext_time_pub_install-lvm.sh
 
 # the extension will be installed on reboot
 reboot
@@ -424,6 +481,10 @@ ps  | grep time_publisher
 #16406 root      4148 S    ./time_publisher
 #16410 root      2528 S    grep time_publisher
 
+socat -u UDP-LISTEN:5005 -
+# 2025-05-13T18:16:01Z
+# 2025-05-13T18:16:02Z
+
 # check the pid
 cat /var/run/time_publisher.pid
 #16406
@@ -437,6 +498,36 @@ Contact your Partner Engineer for information about submitting your extension fo
 ## Step 6 - Restoring the Player State
 
 Consult the [Documentation page](https://docs.brightsign.biz/space/DOC/1936916598/Factory+Reset+a+Player) for methods to reset the player. A full factory reset is recommended as the best way to establish a known starting point.
+
+### Uninstalling the Extension
+
+1. Connect to the player over SSH and drop to the Linux shell.
+2. STOP the extension -- e.g. `/var/volatile/bsext/ext_time_pub/bsext_init stop`
+3. VERIFY all the processes for your extension have stopped. (Can use the `ps`, `socat`, and other commands used previously.)
+4. Unmount the extension filesystem and remove it from BOTH the `/var/volatile` filesystem AND the `/dev/mapper` filesystem.
+
+Following the outline given by the `make-extension` script.
+
+```sh
+# EXAMPLE USAGE -- CUSTOMIZE THIS FOR YOUR EXTENSION
+
+# stop the extension
+/var/volatile/bsext/ext_time_pub/bsext_init stop
+
+# check that all the processes are stopped
+# ps | grep ext_time_publisher
+
+# unmount the extension
+umount /var/volatile/bsext/ext_time_pub
+# remove the extension
+rm -rf /var/volatile/bsext/ext_time_pub
+
+# remove the extension from the system
+lvremove --yes /dev/mapper/bsos-ext_time_pub
+rm -rf /dev/mapper/bsos-ext_time_pub
+
+reboot
+```
 
 
 

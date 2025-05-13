@@ -8,17 +8,15 @@ However for development, this is rather inconvenient. Therefore, the security ch
 
 * The Player is connected to the Development Host as in [Serial-Connection](./Serial-Connection.md)
 
-1. **POWER OFF THE PLAYER**  (_ProTip: A power strip or smart plug device can prove handy for this_)
-
+1. __POWER OFF THE PLAYER__  (_ProTip: A power strip or smart plug device can prove handy for this_)
 2. Connect the serial monitor program as in [Serial-Connection](./Serial-Connection.md)
-
 3. **WHILE HOLDING the SVC button** power ON the player
 
-**Quick**, _like a bunny_, hit `Ctl-C` on the serial console.  
+__Quick__, _like a bunny_, hit `Ctl-C` on the serial console.
 
 Do this withing 3 seconds or repeat the process.  Once at a prompt, type:
 
-```
+```sh
 console on
 reboot
 ```
@@ -29,7 +27,7 @@ This will enable the serial console.
 
 Un-secure the player by typing into the console:
 
-```
+```sh
 setenv SECURE_CHECKS 0
 env save
 
@@ -43,7 +41,7 @@ reboot
 
 5. Verify that the serial console is showing a boot log, which may look something like:
 
-```
+```yaml
 
 
 U-Boot 2017.09 (BrightSign v9.1.22.1, Feb 28 2025 - 17:28:18 +0000)
@@ -84,5 +82,15 @@ Fit image detected...
 ```
 
 If it does not, repeat the procedure.
+
+## Enable script debugging
+
+Ensure the registry key `brightscript debug` is set to `1`.  From a command prompt or in DWS
+
+```
+registry write brightscript debug 1 
+```
+
+This will allow you to type `Ctl-C` in an ssh shell to stop the BrightScript interpretter.
 
 ## Congratulations, player is now un-secured and ready for development
