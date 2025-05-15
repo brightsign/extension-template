@@ -32,6 +32,14 @@ To complete this workshop, you will need:
 * a BrightSign Player running OS v 9.x or later (extensions are supported on earlier releases, but this workshop was only tested with 9.x)
 * serial cabling to connect the player's serial port to the development host
 
+### (Recommended) Docker
+
+A Dockerfile is provided to build the SDK and its use is recommended.
+
+**[Install](https://docs.docker.com/engine/install/) Docker** and ensure it functions properly.
+
+If you do not wish to use Docker, consult the `Dockerfile` for the build system requirements.
+
 ### (Optional) Convenience
 
 May of the command blocks that follow in the file can be executed as "Notebook" cells when using the VS Code extension "RunME".  They can also, of course, be copied and pasted. To facilitate reproducibility, defining a environment variable is convenient to help orient working directories and will be used in the shell blocks.  Use of this environment variable is optional, but very helpful.
@@ -79,41 +87,56 @@ BrightSign OS is built using the OpenEmbedded (OE) build system  bitbake (aka Yo
 
 The typical OE mechanism to cross-compile and build binaries for the target is known as the Platform SDK or the OE SDK. BrightSign does not typically provide this SDK. However, in compliance with Open Source licenses, BrightSign does make the Yocto source tree available and the SDK can be built from that tree using the standard build tool `bitbake` as wrapped by the brightsign script `bsbb`.
 
-### Build the SDK
+### Build the SDK - with Docker
 
-0. Change the to project root:
+As there are a large number of package dependencies, building with Docker is recommended.  To build the SDK with the Dockerfile, first make any recipe modifications (see below).
+
+Proceed to build the container.
 
 ```bash
 cd ${project_root:-.}
+
+# build the container -- mapping current user
+docker build --rm --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t bsoe-build .
 ```
+
+Continue to fetch the release bundles.
 
 1. Open the [Open Source Release](https://docs.brightsign.biz/releases/brightsign-open-source) page and find the target OS release version. Click on the readme for that version and review any information there.
 2. Download the two files - `*-src-dl.tar.gz` and `*-src-oe.tar.gz` to the `project_root`
 3. Expand both tarballs
 
-   `tar zxvf *-dl.tar.gz && tar zxvf *-oe.tar.gz`
+```bash
+cd ${project_root:-.}
+
+tar zxvf *-dl.tar.gz && tar zxvf *-oe.tar.gz
+```
 
    this will create a `brightsign-oe` directory in the current directory
 
-4. Disable or remove any virtual environments like `venv`, `pyenv`, `nvm` or `conda`
+Run the container with an interactive terminal
 
-   a. Long paths can cause build problems in bitbake (which will create a bunch of very long paths itself). These virtual environments typically work by adding very long paths to the front of the shell's path.
+```sh
+cd ${project_root:-.}
 
-   b. These can usually just be disabled either by command -- `conda deactivate` or by commenting out the relevant PATH insertions in your `.bashrc` file
+mkdir -p srv
+# the build process puts some output in srv
 
-   c. There are many mechanisms -- consult the documentation for your package.
+docker run -it --rm \
+  -v $(pwd):/home/builder/bsoe -v $(pwd)/srv:/srv \
+  bsoe-build
+```
 
-5. Change to the build directory
+From the container shell you just launched, build the full release.
 
-   `cd ${project_root:-.}/brightsign-oe/build`
+```sh
+cd /home/builder/bsoe/build
 
-   Consult the readme for the correct build command - typically the build command is
+MACHINE=cobra ./bsbb brightsign-source-release-world
+# This will build the entire system and may take up to several hours depending on the speed of your build system.
+```
 
-   `MACHINE=cobra ./bsbb brightsign-source-release-world`
-
-   This will build the entire system and may take up to several hours depending on the speed of your build system.
-
-6. Address and repair any build errors. Common problems include
+Address and repair any build errors. Common problems include
 
    a. Long paths
 
@@ -125,13 +148,23 @@ cd ${project_root:-.}
 
    e. Trying to write to unusual directories like `/srv`. It is usually easiest to create these if needed
 
-7. Once building cleanly, build the SDK by changing the target to `brightsign-sdk`
+Once building cleanly, build the SDK by changing the target to `brightsign-sdk`
 
-   `MACHINE=cobra ./bsbb brightsign-sdk`
+```sh
+cd /home/builder/bsoe/build
 
-8. Locate the SDK installer in `tmp-glibc/deploy/sdk/*.sh` and save it.
+MACHINE=cobra ./bsbb brightsign-sdk
+```
 
-   `cp tmp-glibc/deploy/sdk/*.sh ${project_root:-../../}`
+If the build is successful, exit the container shell and copy the built SDK to the project root.
+
+```sh
+# The SDK installer is in `brightsign-oe/build/tmp-glibc/deploy/sdk/*.sh`
+
+cd ${project_root:-.}
+
+cp brightsign-oe/build/tmp-glibc/deploy/sdk/*.sh ${project_root:-.}
+```
 
 ### Using packages not in the SDK
 
@@ -447,7 +480,7 @@ sh/pkg-dev.sh install lvm
 
 Transfer the most recent zip file to the player as you did before.
 
-**_Is DWS Unresponsive to upload a file?_** 
+___Is DWS Unresponsive to upload a file?___
 
 This can happen when the BrightScript process is stopped such as when you in an active SSH session.  To re-activate DWS, restart the BrightScript process in your ssh session by exiting the Linux prompt with `Ctl-D`.
 
