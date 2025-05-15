@@ -153,7 +153,7 @@ Once building cleanly, build the SDK by changing the target to `brightsign-sdk`
 ```sh
 cd /home/builder/bsoe/build
 
-MACHINE=cobra ./bsbb brightsign-sdk`
+MACHINE=cobra ./bsbb brightsign-sdk
 ```
 
 If the build is successful, exit the container shell and copy the built SDK to the project root.
