@@ -97,7 +97,7 @@ Proceed to build the container.
 cd ${project_root:-.}
 
 # build the container -- mapping current user
-docker build --rm --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t --ulimit memlock=-1:-1 bsoe-build .
+docker build --rm --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) --ulimit memlock=-1:-1 -t bsoe-build .
 ```
 
 Continue to fetch the release bundles.
