@@ -136,6 +136,13 @@ MACHINE=cobra ./bsbb brightsign-source-release-world
 # This will build the entire system and may take up to several hours depending on the speed of your build system.
 ```
 
+If you have a powerful build machine, you can speed up the compile by adding threads:
+
+```sh
+BB_NUMBER_THREADS=8 MACHINE=cobra ./bsbb brightsign-sdk
+```
+
+
 Address and repair any build errors. Common problems include
 
    a. Long paths
