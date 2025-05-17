@@ -156,6 +156,12 @@ cd /home/builder/bsoe/build
 MACHINE=cobra ./bsbb brightsign-sdk
 ```
 
+If you have a powerful build machine, you can speed up the compile by adding threads:
+
+```sh
+BB_NUMBER_THREADS=8 MACHINE=cobra ./bsbb brightsign-sdk
+```
+
 If the build is successful, exit the container shell and copy the built SDK to the project root.
 
 ```sh
