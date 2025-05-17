@@ -142,6 +142,7 @@ If you have a powerful build machine, you can speed up the compile by adding thr
 BB_NUMBER_THREADS=8 MACHINE=cobra ./bsbb brightsign-sdk
 ```
 
+Generally you will get the best performance by setting the threads to the number of cores you have available.
 
 Address and repair any build errors. Common problems include
 
@@ -168,6 +169,8 @@ If you have a powerful build machine, you can speed up the compile by adding thr
 ```sh
 BB_NUMBER_THREADS=8 MACHINE=cobra ./bsbb brightsign-sdk
 ```
+
+Generally you will get the best performance by setting the threads to the number of cores you have available.
 
 If the build is successful, exit the container shell and copy the built SDK to the project root.
 
