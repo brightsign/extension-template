@@ -29,6 +29,7 @@ This repository presents a self-guided Workshop that the reader can use as a gui
 To complete this workshop, you will need:
 
 * a development host with an **x86 architecture CPU** and running **Linux**
+* the tooling to make a squashfs file system - easily installed on a debian-based system using "apt get install squashfs-tools"
 * a BrightSign Player running OS v 9.x or later (extensions are supported on earlier releases, but this workshop was only tested with 9.x)
 * serial cabling to connect the player's serial port to the development host
 
