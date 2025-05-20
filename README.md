@@ -124,7 +124,7 @@ mkdir -p srv
 # the build process puts some output in srv
 
 docker run -it --rm \
-  -v $(pwd):/home/builder/bsoe -v $(pwd)/srv:/srv \
+  -v $(pwd)/brightsign-oe:/home/builder/bsoe -v $(pwd)/srv:/srv \
   bsoe-build
 ```
 
