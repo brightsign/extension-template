@@ -284,7 +284,7 @@ Open a **THIRD** terminal and test the signal handling, which is important for E
 kill $(pgrep time_publisher)
 ```
 
-__Verfify__ the publisher is stopped, that `socat` stops printing times and that the `kill` returned without errors.  _You will need to shutdown `socat` manually.
+__Verfify__ the publisher is stopped, that `socat` stops printing times and that the `kill` returned without errors.  _You will need to shutdown `socat` manually._
 
 _Optional_: `rm -rf ${project_root:-}/build_native`
 
