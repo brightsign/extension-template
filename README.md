@@ -129,6 +129,7 @@ docker run -it --rm \
 ```
 
 From the container shell you just launched, build the full release.
+_This is somewhat optional as it may take a long time, but will provide assurance that your source download and build system are complete._
 
 ```sh
 cd /home/builder/bsoe/build
@@ -139,15 +140,13 @@ MACHINE=cobra ./bsbb brightsign-source-release-world
 
 Address and repair any build errors. Common problems include
 
-   a. Long paths
+   * Long paths
 
-   b. Missing system packages
+   * Missing system packages
 
-   c. Insufficient number of file handles - this can be increased with `ulimit -n 8192` or similar
+   * Insufficient number of file handles - this can be increased with `ulimit -n 8192` or similar
 
-   d. Insufficient disk space
-
-   e. Trying to write to unusual directories like `/srv`. It is usually easiest to create these if needed
+   * Insufficient disk space
 
 Once building cleanly, build the SDK by changing the target to `brightsign-sdk`
 
@@ -156,14 +155,6 @@ cd /home/builder/bsoe/build
 
 MACHINE=cobra ./bsbb brightsign-sdk
 ```
-
-If you have a powerful build machine, you can speed up the compile by adding threads:
-
-```sh
-BB_NUMBER_THREADS=8 MACHINE=cobra ./bsbb brightsign-sdk
-```
-
-Generally you will get the best performance by setting the threads to the number of cores you have available.
 
 If the build is successful, exit the container shell and copy the built SDK to the project root.
 
