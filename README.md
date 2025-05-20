@@ -572,7 +572,9 @@ reboot
 ```
 
 
+## Licensing
 
+This project is released under the terms of the [Apache 2.0 License](./LICENSE.txt).  
 
 
 
