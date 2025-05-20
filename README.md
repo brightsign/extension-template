@@ -419,7 +419,7 @@ When developing, it is recommended to set just such a `disable` key to prevent t
 
 The command `cmake --install .` you executed earlier from the `build_bsos` directory copied these scripts to the `install` directory.
 
-Now that you have the skill to build the binary, package and transfer the zip archive, try using the `start-ext.sh` script to start your program.  __Then__ proceed to use the `bsext_init` script to start and stop the service (`bsext_init start` and `bsext_init stop`).  This script will start/stop the program as a daemon, so you can try it out in your presentation as well.
+Now that you have the skill to build the binary, package and transfer the zip archive, try using `bsext_init run` to start your program.  __Then__ proceed to use the `bsext_init` script to start and stop the service (`bsext_init start` and `bsext_init stop`).  This script will start/stop the program as a daemon, so you can try it out in your presentation as well.
 
 **Test the init script.**
 
