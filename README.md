@@ -530,7 +530,7 @@ Contact your Partner Engineer for information about submitting your extension fo
 
 ## Step 6 - Restoring the Player State
 
-Consult the [Documentation page](https://docs.brightsign.biz/space/DOC/1936916598/Factory+Reset+a+Player) for methods to reset the player. A full factory reset is recommended as the best way to establish a known starting point.
+Consult the [Documentation page](https://docs.brightsign.biz/how-tos/factory-reset-a-player) for methods to reset the player. A full factory reset is recommended as the best way to establish a known starting point.
 
 ### Uninstalling the Extension
 
