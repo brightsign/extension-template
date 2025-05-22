@@ -63,6 +63,15 @@ AVS: CPU: V=0.991V, T=+30.180C, PV=0.850V, MV=0.994V
 Automatic startup in 3 seconds, press Ctrl-C to interrupt.
 ```
 
+6.  Enable console
+
+From the serial terminal (`=>` prompt) type these commands to enable the serial console output and restart the player.
+
+```bash
+=> console on
+=> reboot
+```
+
 ## Congratulations
 
 You have successfully connected your player over serial to your dev host
