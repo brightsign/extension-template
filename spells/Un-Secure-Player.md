@@ -91,6 +91,8 @@ Ensure the registry key `brightscript debug` is set to `1`.  From a command prom
 registry write brightscript debug 1 
 ```
 
+**Reboot** the player to apply the registry changes.
+
 This will allow you to type `Ctl-C` in an ssh shell to stop the BrightScript interpretter.
 
 ## Congratulations, player is now un-secured and ready for development
