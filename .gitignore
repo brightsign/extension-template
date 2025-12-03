@@ -1,7 +1,8 @@
 brightsign-oe/
-build*/
-install/
 sdk/
 *.zip
 *.tar.gz
 brightsign-*-toolchain-*.sh
+**/build*/
+**/install/
+**/node_modules/

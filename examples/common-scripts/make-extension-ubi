@@ -2,7 +2,7 @@
 set -e
 
 # set the name of the extension -- must match bsext_init
-name=time_publisher
+name="$0"
 
 workdir=extension-${name}-temp/
 
