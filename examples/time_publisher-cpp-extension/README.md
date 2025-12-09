@@ -422,7 +422,7 @@ Package the extension.
 ```sh
 cd ${project_root:-.}
 
-bash ../common-scripts/pkg-dev.sh install lvm time_publisher
+bash ../common-scripts/pkg-dev.sh install lvm time_pub
 ```
 
 Transfer the most recent zip file to the player as you did before.
@@ -439,11 +439,11 @@ cd /usr/local
 # clean up any leftovers
 #rm -rf *
 
-export latest=$(ls -t /storage/sd/time_publisher-*.zip | head -n 1)
+export latest=$(ls -t /storage/sd/time_pub-*.zip | head -n 1)
 unzip ${latest} -o -d /usr/local/
 
 # install the extension
-bash ./ext_time_publisher_install-lvm.sh
+bash ./ext_time_pub_install-lvm.sh
 
 # the extension will be installed on reboot
 reboot
@@ -482,7 +482,7 @@ Consult the [Documentation page](https://docs.brightsign.biz/space/DOC/193691659
 ### Uninstalling the Extension
 
 1. Connect to the player over SSH and drop to the Linux shell.
-2. STOP the extension -- e.g. `/var/volatile/bsext/ext_time_publisher/bsext_init stop`
+2. STOP the extension -- e.g. `/var/volatile/bsext/ext_time_pub/bsext_init stop`
 3. VERIFY all the processes for your extension have stopped. (Can use the `ps`, `socat`, and other commands used previously.)
 4. Unmount the extension filesystem and remove it from BOTH the `/var/volatile` filesystem AND the `/dev/mapper` filesystem.
 
@@ -492,19 +492,19 @@ Following the outline given by the `make-extension` script.
 # EXAMPLE USAGE -- CUSTOMIZE THIS FOR YOUR EXTENSION
 
 # stop the extension
-/var/volatile/bsext/ext_time_publisher/bsext_init stop
+/var/volatile/bsext/ext_time_pub/bsext_init stop
 
 # check that all the processes are stopped
-# ps | grep ext_time_publisher
+# ps | grep ext_time_pub
 
 # unmount the extension
-umount /var/volatile/bsext/ext_time_publisher
+umount /var/volatile/bsext/ext_time_pub
 # remove the extension
-rm -rf /var/volatile/bsext/ext_time_publisher
+rm -rf /var/volatile/bsext/ext_time_pub
 
 # remove the extension from the system
-lvremove --yes /dev/mapper/bsos-ext_time_publisher
-rm -rf /dev/mapper/bsos-ext_time_publisher
+lvremove --yes /dev/mapper/bsos-ext_time_pub
+rm -rf /dev/mapper/bsos-ext_time_pub
 
 reboot
 ```
