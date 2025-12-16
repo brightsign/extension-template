@@ -1,7 +1,30 @@
+# SDK and build artifacts
 brightsign-oe/
 build*/
 install/
 sdk/
+srv/
+
+# Archives
 *.zip
 *.tar.gz
+
+# SDK installer
 brightsign-*-toolchain-*.sh
+
+# Node.js
+node_modules/
+yarn-error.log
+
+# Go
+hello_world_go
+
+# Extension build artifacts
+ext_*.squashfs
+ext_*_install*.sh
+extension-*-temp/
+
+# IDE
+.idea/
+*.swp
+*.swo
