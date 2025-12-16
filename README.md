@@ -1,13 +1,87 @@
 # Building Extensions for BrightSign Players
 
-_A Workshop_
-
-- Version 2.0
-- December 2025
-
 ## Introduction
 
 The "BrightSign OS Extensions" feature allows BrightSign partners to run their own code on BrightSign products. This repository provides a self-guided workshop for creating, debugging, and deploying extensions, with examples in multiple programming languages.
+
+---
+
+## For the Impatient
+
+Want to get started quickly with a TypeScript/Node.js extension? Follow these steps:
+
+### 1. Create Your Repository
+
+Click the **"Use this template"** button at the top of this repository to create your own copy.
+
+### 2. Clone and Setup
+
+```bash
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+cd YOUR_REPO_NAME
+
+# Navigate to the TypeScript example
+cd examples/hello_world-ts-extension
+
+# Install dependencies
+npm install
+
+# Build the extension
+npm run build
+```
+
+### 3. Customize Your Extension
+
+1. **Rename your extension**: Update `DAEMON_NAME` in `bsext_init` and the extension name in `package.json`
+2. **Modify the code**: Edit `src/index.ts` with your application logic
+3. **Update configuration**: Adjust settings in `src/config.ts`
+
+### 4. Package and Deploy
+
+```bash
+# Package for deployment
+npm run package-lvm
+
+# Copy the resulting zip to your un-secured player and install
+```
+
+### 5. Clean Up Unused Examples
+
+Delete the examples you don't need:
+
+```bash
+# From repository root
+rm -rf examples/time_publisher-cpp-extension  # If not using C++
+rm -rf examples/hello_world-go-extension      # If not using Go
+rm -rf examples/hello_world-ts-extension      # If not using TypeScript
+rm -rf Dockerfile                              # If not building SDK
+rm -rf plans/                                  # Planning documents
+```
+
+### LLM Prompt for Automatic Setup
+
+If you're using an AI assistant like Claude Code or GitHub Copilot, use this prompt to automate the setup:
+
+```
+I've created a new repository from the BrightSign extension template. Please help me set up a new TypeScript extension called "[YOUR_EXTENSION_NAME]" that [DESCRIBE WHAT YOUR EXTENSION DOES].
+
+Please:
+1. Rename the hello_world-ts-extension directory to [YOUR_EXTENSION_NAME]-extension
+2. Update DAEMON_NAME in bsext_init to "[YOUR_EXTENSION_NAME]"
+3. Update the package.json name and description
+4. Modify src/index.ts to implement: [YOUR FUNCTIONALITY]
+5. Update src/config.ts with appropriate configuration
+6. Delete the examples I won't use: [time_publisher-cpp-extension / hello_world-go-extension]
+7. Delete the Dockerfile if I don't need the SDK
+8. Update this README.md to describe my specific extension
+9. Delete the plans/ directory
+
+My extension should: [DETAILED DESCRIPTION OF FUNCTIONALITY]
+```
+
+For more detailed guidance on working with this codebase using an LLM, see [CLAUDE.md](./CLAUDE.md).
+
+---
 
 ## What is a BrightSign Extension?
 
