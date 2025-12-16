@@ -36,11 +36,14 @@ fi
 # Run the appropriate packaging script
 ${script_dir}/make-extension-${vol_type} "${ext_name}"
 
+# Store timestamp for consistent filename
+timestamp=$(date +%s)
+
 # Create zip with extension files
-zip -r ../${ext_name}-$(date +%s).zip ext_${ext_name}*
+zip -r ../${ext_name}-${timestamp}.zip ext_${ext_name}*
 
 # Clean up generated files in install directory
 rm -rf ext_${ext_name}*
 
 echo ""
-echo "Package created: ../${ext_name}-$(date +%s).zip"
+echo "Package created: ../${ext_name}-${timestamp}.zip"
