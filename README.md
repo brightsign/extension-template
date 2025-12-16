@@ -27,15 +27,36 @@ A BrightSign extension is a **squashfs filesystem** that is installed onto the p
 4. **Shutdown**: Player runs `bsext_init stop` for graceful cleanup
 5. **Uninstallation**: Volume is unmounted and removed from NVRAM
 
+## Types of Extensions
+
+Extensions fall into two categories based on their compatibility with BrightSign OS (BOS) versions:
+
+### Standalone Extensions
+
+**Standalone** extensions work regardless of the BOS version. They have no dependencies on version-specific system libraries.
+
+Examples:
+- Go applications (statically compiled)
+- JavaScript/Node.js applications (use the player's runtime)
+- Any statically-linked binary
+
+### Versioned Extensions
+
+**Versioned** extensions only work on a specific version of BOS because they depend on version-specific libraries (like glibc or libstdc++). If the BOS is updated, the extension may need to be recompiled and re-signed.
+
+Examples:
+- C/C++ applications with dynamic linking
+- Any application that links against system shared libraries
+
 ## Types of Extension Software
 
 Extensions can contain different types of software. The type determines whether you need the BrightSign SDK:
 
-| Type | Language Examples | SDK Required? | Reason |
-|------|-------------------|---------------|--------|
-| **Compiled (Dynamic)** | C, C++, Rust (default) | **YES** | Must link against player's glibc and shared libraries |
-| **Compiled (Static)** | Go, Rust (musl) | **NO** | Self-contained binary with no runtime dependencies |
-| **Interpreted** | JavaScript/TypeScript, Python, Shell | **NO** | Uses interpreter already on player |
+| Type | Language Examples | SDK Required? | Extension Type |
+|------|-------------------|---------------|----------------|
+| **Compiled (Dynamic Linking)** | C, C++, Rust (default) | **YES** | Versioned |
+| **Compiled (Static Linking)** | Go, Rust (musl) | **NO** | Standalone |
+| **Interpreted** | JavaScript/TypeScript, Python, Shell | **NO** | Standalone |
 
 ### When You Need the SDK
 
@@ -44,10 +65,14 @@ If your compiled code uses **dynamic linking** to shared libraries on the player
 - Headers and libraries matching the player's runtime
 - Ensures binary compatibility with the target OS version
 
+**Note**: Extensions built with the SDK are **versioned** - they are tied to the specific BOS version the SDK was built from.
+
 ### When You Don't Need the SDK
 
 - **Statically compiled** binaries (like Go) include everything needed - no runtime dependencies
 - **Interpreted languages** use runtimes already on the player (Node.js is available on BrightSign players)
+
+These extensions are **standalone** and will work across BOS versions.
 
 ## Extension Development Process
 
@@ -191,6 +216,40 @@ Contact your Partner Engineer for information about submitting your extension fo
 **Important**: Your extension name must be **globally unique** across all BrightSign partners. When you submit for signing, BrightSign may require you to change the name to meet this requirement.
 
 Once signed, the extension will be returned as a `.bsfw` file that can be applied to production (secure) players by placing it on the SD card. The extension will be installed on reboot.
+
+## Checking if an Extension is Installed
+
+### Using the Diagnostic Web Server (DWS)
+
+1. Open the DWS in a browser (typically `http://<player-ip>`)
+2. Navigate to **Control** > **Extensions**
+3. Installed extensions will be listed with their names and status
+
+### Using the Command Line
+
+Connect via SSH and drop to the Linux shell (`Ctrl-C`, `exit`, `exit`), then:
+
+```bash
+# List installed extension volumes
+ls /var/volatile/bsext/
+
+# Check if a specific extension is mounted
+mount | grep bsext
+
+# View extension processes
+ps | grep -E "(time_publisher|hello_world)"
+```
+
+## Removing an Extension
+
+**The recommended way to remove an extension is to perform a factory reset.**
+
+While it is technically possible to manually unmount and remove extension volumes (as shown in the individual example READMEs), a factory reset is the cleanest and most reliable method:
+
+- Consult the [Factory Reset Documentation](https://docs.brightsign.biz/space/DOC/1936916598/Factory+Reset+a+Player)
+- A full hard factory reset (2-button approach) is recommended
+
+This ensures all extension data is completely removed and the player is returned to a known good state.
 
 ## Restoring Player State
 
