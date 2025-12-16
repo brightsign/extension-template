@@ -1,6 +1,6 @@
 # Serial Connection from Player to Development Host
 
-Serial communications is used to interrupt the boot cycle and insecure the player and for many other diagnostic situations. In this Spell, you will connect a player to your development host and verify the connection.
+Serial communications is used to interrupt the boot cycle and unsecure the player and for many other diagnostic situations. In this guide, you will connect a player to your development host and verify the connection.
 
 ## Requirements
 

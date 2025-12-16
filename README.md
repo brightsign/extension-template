@@ -56,7 +56,7 @@ Extensions can contain different types of software. The type determines whether 
 |------|-------------------|---------------|----------------|
 | **Compiled (Dynamic Linking)** | C, C++, Rust (default) | **YES** | Versioned |
 | **Compiled (Static Linking)** | Go, Rust (musl) | **NO** | Standalone |
-| **Interpreted** | JavaScript/TypeScript, Python, Shell | **NO** | Standalone |
+| **Interpreted** | TypeScript/JavaScript, Python, Shell | **NO** | Standalone |
 
 ### When You Need the SDK
 
@@ -128,10 +128,11 @@ Use the provided packaging scripts to:
 - Go 1.21 or later
 - Cross-compilation: `GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build`
 
-### JavaScript/TypeScript Extensions (No SDK)
+### TypeScript/JavaScript Extensions (No SDK)
 
-- Node.js 18+ and npm/yarn
-- Webpack or similar bundler for packaging
+- Node.js 18+ and npm
+- TypeScript and Webpack for compilation and bundling
+- Verify Node.js version on target player matches development environment
 
 ## Un-Secure the Player for Development
 
@@ -169,13 +170,13 @@ A C++ application that broadcasts the current time over UDP.
 - **Demonstrates**: Signal handling, UDP sockets, cross-compilation
 - **Documentation**: [examples/time_publisher-cpp-extension/README.md](./examples/time_publisher-cpp-extension/README.md)
 
-### JavaScript Extension: hello_world
+### TypeScript Extension: hello_world
 
-A Node.js application that broadcasts device info and timestamps over UDP.
+A TypeScript/Node.js application that broadcasts device info and timestamps over UDP.
 
 - **SDK Required**: No (uses player's Node.js runtime)
-- **Demonstrates**: BrightSign JavaScript APIs, Webpack bundling
-- **Documentation**: [examples/hello_world-js-extension/README.md](./examples/hello_world-js-extension/README.md)
+- **Demonstrates**: TypeScript setup, BrightSign JavaScript APIs, Webpack bundling
+- **Documentation**: [examples/hello_world-ts-extension/README.md](./examples/hello_world-ts-extension/README.md)
 
 ### Go Extension: hello_world_go
 
@@ -196,7 +197,7 @@ A Go application that broadcasts "Hello World" messages over UDP.
 | If you want to... | Use this example |
 |-------------------|------------------|
 | Use C/C++ with system libraries | [time_publisher-cpp-extension](./examples/time_publisher-cpp-extension/) |
-| Use JavaScript/Node.js | [hello_world-js-extension](./examples/hello_world-js-extension/) |
+| Use TypeScript/Node.js | [hello_world-ts-extension](./examples/hello_world-ts-extension/) |
 | Use Go (simplest cross-compilation) | [hello_world-go-extension](./examples/hello_world-go-extension/) |
 
 ## Common Scripts
