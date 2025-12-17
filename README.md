@@ -297,7 +297,7 @@ Once signed, the extension will be returned as a `.bsfw` file that can be applie
 ### Using the Diagnostic Web Server (DWS)
 
 1. Open the DWS in a browser (typically `http://<player-ip>`)
-2. Navigate to **Control** > **Extensions**
+2. Navigate to **Info** > **Extensions**
 3. Installed extensions will be listed with their names and status
 
 ### Using the Command Line

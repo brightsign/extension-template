@@ -95,7 +95,7 @@ cp brightsign-oe/build/tmp-glibc/deploy/sdk/*.sh .
 
 ### Native Build (for testing on host)
 
-Test the code on your development machine first:
+Test the code on your development machine first. Start from a new shell where the SDK enviornment has NOT been sourced.
 
 ```bash
 cd examples/time_publisher-cpp-extension
@@ -140,10 +140,10 @@ cmake --install .
 cd examples/time_publisher-cpp-extension
 
 # Package for LVM volume (most common)
-../common-scripts/pkg-dev.sh install lvm
+../common-scripts/pkg-dev.sh install lvm time_publisher
 
 # Or for UBI volume
-../common-scripts/pkg-dev.sh install ubi
+../common-scripts/pkg-dev.sh install ubi time_publisher
 ```
 
 This creates a zip file like `time_publisher-1234567890.zip`.

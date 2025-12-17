@@ -217,6 +217,23 @@ registry extension hello_world-disable-auto-start true
 /var/volatile/bsext/ext_hello_world/bsext_init start
 ```
 
+## Uninstalling
+
+```bash
+# Stop the extension
+/var/volatile/bsext/ext_hello_world/bsext_init stop
+
+# Unmount and remove
+umount /var/volatile/bsext/ext_hello_world
+rm -rf /var/volatile/bsext/ext_hello_world
+
+# Remove LVM volume
+lvremove --yes /dev/mapper/bsos-ext_hello_world
+rm -f /dev/mapper/bsos-ext_hello_world
+
+reboot
+```
+
 ## BrightSign JavaScript APIs
 
 This extension uses BrightSign-specific Node.js APIs that are available on the player. These APIs provide access to device features and are marked as "externals" in Webpack so they're loaded at runtime.
