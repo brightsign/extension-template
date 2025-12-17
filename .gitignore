@@ -16,6 +16,7 @@ brightsign-*-toolchain-*.sh
 node_modules/
 yarn-error.log
 package-lock.json
+dist/
 
 # Go
 hello_world_go

@@ -3,14 +3,9 @@ import { PORT, HOST, SEND_INTERVAL_MS, STARTUP_DELAY_MS } from './config';
 
 const udpSocket = dgram.createSocket('udp4');
 
-function sendTimestamp(): void {
-    // Import BrightSign DeviceInfo API (available at runtime on the player)
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const DeviceInfoClass = require('@brightsign/deviceinfo');
-    const deviceInfo = new DeviceInfoClass();
-
+function sendTimestamp(serial: string): void {
     const message = Buffer.from(
-        `Hello World! from ${deviceInfo.serialNumber}: ${new Date().toISOString()}`
+        `Hello World! from ${serial}: ${new Date().toISOString()}`
     );
     console.log('Sending UDP message:', message.toString());
 
@@ -28,7 +23,14 @@ function main(): void {
 
     setTimeout(() => {
         console.log(`Starting UDP broadcast to ${HOST}:${PORT} every ${SEND_INTERVAL_MS / 1000} seconds`);
-        appInterval = setInterval(sendTimestamp, SEND_INTERVAL_MS);
+        
+        // Import BrightSign DeviceInfo API (available at runtime on the player)
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const DeviceInfoClass = require('@brightsign/deviceinfo');
+        const deviceInfo = new DeviceInfoClass();
+        const serial = deviceInfo.serialNumber;
+        
+        appInterval = setInterval(() => sendTimestamp(serial), SEND_INTERVAL_MS);
     }, STARTUP_DELAY_MS);
 
     process.on('SIGINT', () => {
