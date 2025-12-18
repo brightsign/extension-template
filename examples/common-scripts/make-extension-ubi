@@ -1,27 +1,36 @@
 #!/bin/bash
 set -e
 
-# set the name of the extension -- must match bsext_init
-name=time_publisher
+# Extension name can be passed as argument or set via EXT_NAME environment variable
+# If neither, try to detect from bsext_init
+if [ -n "$1" ]; then
+    name="$1"
+elif [ -n "${EXT_NAME}" ]; then
+    name="${EXT_NAME}"
+elif [ -f "bsext_init" ]; then
+    # Try to extract from bsext_init DAEMON_NAME
+    name=$(grep -E '^DAEMON_NAME=' bsext_init 2>/dev/null | cut -d'"' -f2 | head -1)
+fi
+
+if [ -z "${name}" ]; then
+    echo "Error: Extension name not specified" 1>&2
+    echo "Usage: $0 <extension_name>" 1>&2
+    echo "   or: EXT_NAME=myext $0" 1>&2
+    exit 1
+fi
 
 workdir=extension-${name}-temp/
 
-if ! echo "${name}" | egrep -q '^[a-z][a-z0-9_]{2,12}$'; then
-    echo "Error: Invalid extension name specified" 1>&2
+if ! echo "${name}" | egrep -q '^[a-z][a-z0-9_]{2,30}$'; then
+    echo "Error: Invalid extension name '${name}'" 1>&2
+    echo "Name must be 3-31 lowercase letters, numbers, or underscores, starting with a letter" 1>&2
     exit 1
 fi
 
 rm -rf "${workdir}"
 mkdir -p "${workdir}"
 
-now=`date`
-cat <<EOF >${workdir}bsext_init
-#!/bin/sh
-echo
-echo "EXTENSION ${name} INIT built ${now} \$@"
-echo -n "Now is: "; date
-echo
-EOF
+cp -r * ${workdir}
 
 chmod +x ${workdir}bsext_init
 rm -f ext_${name}.squashfs
@@ -117,7 +126,7 @@ bsfw_write_extension_ubi() {
     )
 }
 
-install_script="ext_${name}_install.sh"
+install_script="ext_${name}_install-ubi.sh"
 
 (
     echo "#!/bin/sh"

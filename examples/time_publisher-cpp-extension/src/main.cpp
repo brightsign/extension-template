@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
             std::string time_str = getCurrentTimeISO8601() + "\n";
             sendto(sock, time_str.c_str(), time_str.length(), 0,
                    (struct sockaddr*)&dest_addr, sizeof(dest_addr));
-            
+
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     } catch (const std::exception& e) {
