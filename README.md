@@ -181,6 +181,8 @@ Use the provided packaging scripts to:
 - BrightSign may require name changes to ensure uniqueness across all partners
 - Contact your Partner Engineer for submission process
 - Receive signed `.bsfw` file for production deployment
+  
+> Note that you can request for a standalone extension during the signing step, which will result in a bsfw file that will only contain the extension without an OS version update.
 
 ## Requirements
 
