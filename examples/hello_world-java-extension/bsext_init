@@ -8,7 +8,7 @@
 # Short-Description: Hello BrightSign extension
 ### END INIT INFO
 
-DAEMON_NAME="hello_extension"
+DAEMON_NAME="ext_hello_extension"
 
 # The extension is mounted read-only at EXTENSION_DIR.
 # The JRE is bundled inside the squashfs image so no system Java is required.

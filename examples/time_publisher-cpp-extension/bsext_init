@@ -13,7 +13,7 @@
 [ -f /etc/init.d/functions ] && . /etc/init.d/functions
 
 SCRIPT_PATH=$(dirname $(realpath $0))
-DAEMON_NAME="time_publisher"
+DAEMON_NAME="ext_time_publisher"
 PIDFILE="/var/run/${DAEMON_NAME}.pid"
 
 
