@@ -1,0 +1,81 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          hello_extension
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Hello BrightSign extension
+### END INIT INFO
+
+DAEMON_NAME="hello_extension"
+
+# The extension is mounted read-only at EXTENSION_DIR.
+# The JRE is bundled inside the squashfs image so no system Java is required.
+EXTENSION_DIR="/var/volatile/bsext/${DAEMON_NAME}"
+JAVA_BIN="${EXTENSION_DIR}/jre/bin/java"
+JAR_PATH="${EXTENSION_DIR}/hello-extension-1.0.0.jar"
+PID_FILE="/var/run/${DAEMON_NAME}.pid"
+LOG_FILE="/tmp/${DAEMON_NAME}.log"
+
+run_extension() {
+    # exec replaces this shell with the JVM process.
+    # Signals (SIGTERM/SIGINT) go directly to the JVM and trigger its shutdown hook.
+    exec "${JAVA_BIN}" -jar "${JAR_PATH}"
+}
+
+do_start() {
+    if [ -f "${PID_FILE}" ]; then
+        PID=$(cat "${PID_FILE}")
+        if kill -0 "${PID}" 2>/dev/null; then
+            echo "${DAEMON_NAME} is already running (pid ${PID})"
+            return 0
+        fi
+        rm -f "${PID_FILE}"
+    fi
+
+    start-stop-daemon --start \
+        --background \
+        --make-pidfile \
+        --pidfile "${PID_FILE}" \
+        --exec /bin/sh -- -c "exec ${JAVA_BIN} -jar ${JAR_PATH} >> ${LOG_FILE} 2>&1"
+
+    echo "started ${DAEMON_NAME}"
+}
+
+do_stop() {
+    if [ ! -f "${PID_FILE}" ]; then
+        echo "${DAEMON_NAME} is not running"
+        return 0
+    fi
+
+    PID=$(cat "${PID_FILE}")
+    if kill -TERM "${PID}" 2>/dev/null; then
+        echo "stopped ${DAEMON_NAME} (pid ${PID})"
+    else
+        echo "failed to stop ${DAEMON_NAME} (pid ${PID})"
+    fi
+    rm -f "${PID_FILE}"
+}
+
+case "$1" in
+    start)
+        do_start
+        ;;
+    stop)
+        do_stop
+        ;;
+    restart)
+        do_stop
+        sleep 1
+        do_start
+        ;;
+    run)
+        # Run in the foreground — use this when SSH'd into the player to see output directly.
+        run_extension
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|run}"
+        exit 1
+        ;;
+esac
