@@ -20,7 +20,7 @@ echo "Uninstalling extension: ${name}"
 "${mount_path}/bsext_init" stop 2>/dev/null || true
 
 if mountpoint -q "${mount_path}" 2>/dev/null; then
-    umount "${mount_path}"
+    umount "${mount_path}" || umount -l "${mount_path}"
 fi
 rm -rf "${mount_path}"
 
