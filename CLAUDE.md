@@ -11,7 +11,7 @@ This is a **BrightSign OS Extension template repository**. Extensions are squash
 ### What is an Extension?
 
 - A **squashfs filesystem** written to NVRAM on the player
-- Mounted at `/var/volatile/bsext/{extension_name}/` on boot
+- Mounted at `/var/volatile/bsext/ext_{extension_name}/` on boot
 - Started/stopped via `bsext_init` script (SysV init style)
 - Must have a **globally unique name** for signing
 

@@ -33,6 +33,9 @@ if [ -z "${ext_name}" ]; then
     exit 1
 fi
 
+# Bundle uninstall script into the extension
+cp "${script_dir}/uninstall.sh" .
+
 # Run the appropriate packaging script
 ${script_dir}/make-extension-${vol_type} "${ext_name}"
 
@@ -44,6 +47,7 @@ zip -r ../${ext_name}-${timestamp}.zip ext_${ext_name}*
 
 # Clean up generated files in install directory
 rm -rf ext_${ext_name}*
+rm -f uninstall.sh
 
 echo ""
 echo "Package created: ../${ext_name}-${timestamp}.zip"
