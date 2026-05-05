@@ -39,11 +39,24 @@ npm run build
 ### 4. Package and Deploy
 
 ```bash
-# Package for deployment
+# Package for deployment (creates hello_world-<timestamp>.zip)
 npm run package-lvm
-
-# Copy the resulting zip to your un-secured player and install
 ```
+
+Copy the zip to your un-secured player and install:
+
+```bash
+# From your development host
+scp hello_world-*.zip root@<player-ip>:/storage/sd/
+
+# On the player (SSH, then Ctrl-C, exit, exit to reach Linux shell)
+cd /usr/local
+unzip /storage/sd/hello_world-*.zip
+bash ./ext_hello_world_install-lvm.sh
+reboot
+```
+
+After reboot the extension mounts at `/var/volatile/bsext/ext_hello_world/` and starts automatically.
 
 ### 5. Clean Up Unused Examples
 
@@ -88,7 +101,7 @@ For more detailed guidance on working with this codebase using an LLM, see [CLAU
 A BrightSign extension is a **squashfs filesystem** that is installed onto the player's internal NVRAM storage. Key characteristics:
 
 - **Persistent**: Extensions survive reboots - they are stored in internal flash, not on the SD card
-- **Mountable**: On boot, the extension filesystem is mounted at `/var/volatile/bsext/{extension_name}/`
+- **Mountable**: On boot, the extension filesystem is mounted at `/var/volatile/bsext/ext_{extension_name}/`
 - **Auto-started**: Linux SysV init scripts (`bsext_init`) automatically start your software on boot
 - **Removable**: Extensions can be uninstalled, freeing up the storage space
 - **Read-only**: The squashfs filesystem is read-only; runtime data should go to writable locations
@@ -280,9 +293,10 @@ A Go application that broadcasts "Hello World" messages over UDP.
 
 The `examples/common-scripts/` directory contains shared packaging scripts:
 
-- `make-extension-lvm` - Creates LVM volume package (most common)
-- `make-extension-ubi` - Creates UBI volume package
-- `pkg-dev.sh` - Wrapper script for packaging
+- `make-extension-lvm` - Creates squashfs image and LVM install script (most common)
+- `make-extension-ubi` - Creates squashfs image and UBI install script
+- `pkg-dev.sh` - Wrapper that packages everything into a deployable zip
+- `uninstall.sh` - Bundled into each package; run on-player to remove the extension
 
 These scripts are used by all examples and can be used for your own extensions.
 
@@ -319,14 +333,20 @@ ps | grep -E "(time_publisher|hello_world)"
 
 ## Removing an Extension
 
-**The recommended way to remove an extension is to perform a factory reset.**
+Each package includes an `uninstall.sh` script bundled inside the squashfs. Once the extension is mounted, run it from the player's Linux shell:
 
-While it is technically possible to manually unmount and remove extension volumes (as shown in the individual example READMEs), a factory reset is the cleanest and most reliable method:
+```bash
+# On the player (SSH, then Ctrl-C, exit, exit)
+/var/volatile/bsext/ext_<name>/uninstall.sh
+reboot
+```
+
+The script stops the daemon, unmounts the squashfs, and removes the LVM volume. The reboot completes the cleanup.
+
+If the extension cannot be started or the uninstall script is inaccessible, a factory reset is the fallback:
 
 - Consult the [Factory Reset Documentation](https://docs.brightsign.biz/space/DOC/1936916598/Factory+Reset+a+Player)
 - A full hard factory reset (2-button approach) is recommended
-
-This ensures all extension data is completely removed and the player is returned to a known good state.
 
 ## Restoring Player State
 
